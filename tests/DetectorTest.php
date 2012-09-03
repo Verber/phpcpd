@@ -80,6 +80,7 @@ class PHPCPD_DetectorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(TEST_FILES_PATH . 'Math.php', $clones[0]->bFile);
         $this->assertEquals(150, $clones[0]->bStartLine);
         $this->assertEquals(28, $clones[0]->size);
+
         $this->assertEquals(68, $clones[0]->tokens);
 
         $this->assertEquals(
@@ -115,6 +116,32 @@ class PHPCPD_DetectorTest extends PHPUnit_Framework_TestCase
           $clones[0]->getLines()
         );
     }
+
+  /**
+   * @covers       SebastianBergmann\PHPCPD\Detector\Detector::copyPasteDetection
+   * @covers       SebastianBergmann\PHPCPD\CodeClone::getLines
+   * @dataProvider strategyProvider
+   */
+  public function testDetectingFluentClonesWorks($strategy)
+  {
+    $detector = new SebastianBergmann\PHPCPD\Detector\Detector(new $strategy);
+
+    $clones = $detector->copyPasteDetection(
+      array(TEST_FILES_PATH . 'FluentInterfaceExample.php')
+    );
+
+    $clones = $clones->getClones();
+
+    $this->assertEquals(TEST_FILES_PATH . 'FluentInterfaceExample.php', $clones[0]->aFile);
+    $this->assertEquals(15, $clones[0]->aStartLine);
+    $this->assertEquals(TEST_FILES_PATH . 'FluentInterfaceExample.php', $clones[0]->bFile);
+    $this->assertEquals(60, $clones[0]->bStartLine);
+    $this->assertEquals(24, $clones[0]->size);
+
+    $this->assertEquals(68, $clones[0]->tokens);
+  }
+
+
 
     public function strategyProvider()
     {
